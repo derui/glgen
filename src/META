@@ -1,0 +1,7 @@
+version = "0.2"
+description = "OpenGL binding generator and library"
+requires = "typedvec bigarray"
+archive(byte) = "ogl.cma"
+archive(byte, plugin) = "ogl.cma"
+archive(native) = "ogl.cmxa"
+exists_if = "ogl.cma"
