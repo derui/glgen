@@ -18,8 +18,8 @@ let children = Util.children
 let parse xml =
   let enums = children xml "enums"
          |> List.map ~f:(Fn.flip children "enum")
-         |> List.join in 
-  let tbl = Type_map.empty in 
+         |> List.join in
+  let tbl = Type_map.empty in
   List.fold_left enums ~f:(fun map e ->
     let name = Xml.attrib e "name"
     and value = Xml.attrib e "value"
@@ -28,12 +28,12 @@ let parse xml =
           | [] | [(_, "u")] -> `Int32
           | [(_, "ull")] -> `Int64
           | _ -> failwith "Unknown enum element format"
-        ) in 
+        ) in
     let data = {
       name;
       value = match typ with
       | `Int32 -> `Int32 Int32.(of_string value)
       | `Int64 -> `Int64 Int64.(of_string value);
-    } in 
+    } in
     Type_map.add map ~key:name ~data
   ) ~init:tbl

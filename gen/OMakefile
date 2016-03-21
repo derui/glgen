@@ -82,10 +82,12 @@ FILES[]=
     glreg_parser
     command
     enum
+    groups
     capi
     util
     gen_mli
     gen_ml
+    gen_enum
     special_defs
 
 OCamlProgram(gen_gl, $(FILES))
@@ -105,6 +107,7 @@ foreach(x => ..., $(gl_versions))
 		private.major = $(nth 0, $x)
 		private.minor = $(nth 1, $x)
 		private.LIB = ogl_$(major)_$(minor)
+		private.ENUM = ogl_enum_$(major)_$(minor)
 
 		$(file $(LIB).mli): $(PROGRAM) gl.xml
 			./$< -type mli -major $(major) -minor $(minor) gl.xml > $@
@@ -114,8 +117,12 @@ foreach(x => ..., $(gl_versions))
 			./$< gl.xml -type ml -major $(major) -minor $(minor) gl.xml > $@
 		export
 
-		MyOCamlLibrary($(LIB), $(LIB))
-		gen-library: $(OCamlLibrary $(LIB), $(LIB))
+		$(file $(ENUM).ml): $(PROGRAM) gl.xml
+			./$< gl.xml -type enum -major $(major) -minor $(minor) gl.xml > $@
+		export
+
+		MyOCamlLibrary($(LIB), $(LIB) $(ENUM))
+		gen-library: $(OCamlLibrary $(LIB), $(LIB) $(ENUM)) $(file $(ENUM).ml)
 		export
 
 #

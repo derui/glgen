@@ -83,13 +83,13 @@ let generate_foreign ppf command =
       |> String.concat ~sep:" @-> " 
     in
 
-    Format.fprintf ppf "@[let %s = foreign \"%s\" (%s @-> returning %s)@]"
+    Format.fprintf ppf "@[let %s = foreign \"%s\" (%s @-> returning %s)@]@,"
       name orig_name params typ_name
   end
 
 let generate_foreigns ppf commands =
   let open Core.Std in 
-  Format.fprintf ppf "@[<hov 2>module Inner = struct@ ";
+  Format.fprintf ppf "@[<hov 2>module Inner = struct@,";
 
   List.iter commands ~f:(generate_foreign ppf);
 

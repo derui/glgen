@@ -20,6 +20,7 @@ module Type_set = Set.Make(String)
 type t = {
   commands: Command.t Type_map.t;
   enums: Enum.t Type_map.t;
+  groups: Groups.t;
 }
 
 let filter_feature xml major minor =
@@ -108,7 +109,9 @@ let parse ~xml ~major ~minor =
   let commands = collect_required_commands features |> parse_commands xml in
   let enums = Enum.parse xml in 
   let enums = collect_required_enums features |> filter_enums enums in
+  let groups = Groups.parse xml in 
   {
     commands;
     enums;
+    groups;
   }
