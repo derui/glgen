@@ -1,5 +1,5 @@
 open Core.Std
-  
+
 let children elements name =
   let f = function
     | Xml.Element (tag, _, _) -> tag = name

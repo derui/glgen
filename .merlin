@@ -1,0 +1,8 @@
+S src
+S gen
+B src
+B gen
+EXT spec
+PKG core
+PKG ctypes
+PKG xml-light

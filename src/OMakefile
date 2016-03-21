@@ -89,17 +89,8 @@ OCAMLFLAGS    += -annot -bin-annot -g -thread
 INCLUDES += ../include
 CFLAGS += -std=c99 -fPIC -g
 
-if $(IsMac)
-	CFLAGS += -fnexted-functions
-
-CFILES = $(removesuffix $(ls *.c))
-
-enums.ml: gen
-	cp ../gen/enums.ml .
-
-FILES = $(removesuffix $(ls sdl*.ml))
-FILES[] +=
-	ogl_util
+FILES[] =
+	ogl_camera
 	ogl_types
 
 # files for building extend libraries are contained to dependencies.
@@ -114,7 +105,7 @@ LIBRARY_NAME = ogl
 # As gl_enum.h is referenced by already existed .c file,
 # need to add generated files by camlidl to adependency for .DEFAULT.
 
-MyOCamlPackage($(LIBRARY_NAME), $(FILES), $(CFILES), -linkall, true)
-TARGETS = $(OCamlPackageGeneratedFiles $(LIBRARY_NAME), true)
+MyOCamlPackage($(LIBRARY_NAME), $(FILES), $(EMPTY), -linkall, true)
+TARGETS = $(OCamlPackageGeneratedFiles $(LIBRARY_NAME), false)
 
 all: gen $(TARGETS)

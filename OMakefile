@@ -31,7 +31,7 @@ open MyOCaml
 # If so, define the subdirectory targets and uncomment this section.
 #
 
-.SUBDIRS: src test doc
+.SUBDIRS: src test gen
 
 ########################################################################
 # OCaml configuration.
@@ -98,9 +98,13 @@ OCAMLOPTFLAGS +=
 # OCAML_OTHER_LIBS += nums
 # OCAML_LIB_FLAGS +=
 #
-LIB = 
+LIB = ogl
 
 .DEFAULT: all
 
 install:
-	CreateInstalled($(LIB), $(glob i, src/*ml) $(glob i, src/*c))
+	CreateInstalled($(LIB), $(glob i, src/*ml))
+
+install-gen: install
+	private.files = $(glob i, gen/ogl_*)
+	$(OCAMLFIND) install -add $(files)

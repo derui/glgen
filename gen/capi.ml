@@ -271,8 +271,9 @@ module Ocaml_type = struct
   let gl_debug_proc = {
     name = "(int32 -> int32 -> int32 -> int32 -> int -> string -> unit ptr -> unit)";
     def = `Builtin;
-    ctypes = `Def ("gl_debug_proc",
+    ctypes = `Def ("(funptr gl_debug_proc)",
                    "let gl_debug_proc = int32_as_uint32_t @-> \
+int32_as_uint32_t @-> \
 int32_as_uint32_t @-> \
 int32_as_uint32_t @-> \
 int @-> string @-> (ptr void) @-> returning void"

@@ -1,7 +1,79 @@
-version = "0.2"
+version = "0.1"
 description = "OpenGL binding generator and library"
 requires = "typedvec bigarray"
 archive(byte) = "ogl.cma"
 archive(byte, plugin) = "ogl.cma"
 archive(native) = "ogl.cmxa"
 exists_if = "ogl.cma"
+
+package "3_2" (
+  version = "0.1"
+  requires = "ctypes"
+  archive(byte) = "ogl_3_2.cma"
+  archive(byte, plugin) = "ogl_3_2.cma"
+  archive(native) = "ogl_3_2.cmxa"
+  exists_if = "ogl_3_2.cma"
+)
+
+package "3_3" (
+  version = "0.1"
+  requires = "ctypes"
+  archive(byte) = "ogl_3_3.cma"
+  archive(byte, plugin) = "ogl_3_3.cma"
+  archive(native) = "ogl_3_3.cmxa"
+  exists_if = "ogl_3_3.cma"
+)
+
+package "4_0" (
+  version = "0.1"
+  requires = "ctypes"
+  archive(byte) = "ogl_4_0.cma"
+  archive(byte, plugin) = "ogl_4_0.cma"
+  archive(native) = "ogl_4_0.cmxa"
+  exists_if = "ogl_4_0.cma"
+)
+
+package "4_1" (
+  version = "0.1"
+  requires = "ctypes"
+  archive(byte) = "ogl_4_1.cma"
+  archive(byte, plugin) = "ogl_4_1.cma"
+  archive(native) = "ogl_4_1.cmxa"
+  exists_if = "ogl_4_1.cma"
+)
+
+package "4_2" (
+  version = "0.1"
+  requires = "ctypes"
+  archive(byte) = "ogl_4_2.cma"
+  archive(byte, plugin) = "ogl_4_2.cma"
+  archive(native) = "ogl_4_2.cmxa"
+  exists_if = "ogl_4_2.cma"
+)
+
+package "4_3" (
+  version = "0.1"
+  requires = "ctypes"
+  archive(byte) = "ogl_4_3.cma"
+  archive(byte, plugin) = "ogl_4_3.cma"
+  archive(native) = "ogl_4_3.cmxa"
+  exists_if = "ogl_4_3.cma"
+)
+
+package "4_4" (
+  version = "0.1"
+  requires = "ctypes"
+  archive(byte) = "ogl_4_4.cma"
+  archive(byte, plugin) = "ogl_4_4.cma"
+  archive(native) = "ogl_4_4.cmxa"
+  exists_if = "ogl_4_4.cma"
+)
+
+package "4_5" (
+  version = "0.1"
+  requires = "ctypes"
+  archive(byte) = "ogl_4_5.cma"
+  archive(byte, plugin) = "ogl_4_5.cma"
+  archive(native) = "ogl_4_5.cmxa"
+  exists_if = "ogl_4_5.cma"
+)

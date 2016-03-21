@@ -104,7 +104,7 @@ foreach(x => ..., $(gl_versions))
 	section:
 		private.major = $(nth 0, $x)
 		private.minor = $(nth 1, $x)
-		private.LIB = gl_bindings_$(major)_$(minor)
+		private.LIB = ogl_$(major)_$(minor)
 
 		$(file $(LIB).mli): $(PROGRAM) gl.xml
 			./$< -type mli -major $(major) -minor $(minor) gl.xml > $@

@@ -9,3 +9,6 @@
 
 *.omc
 .omakedb*
+
+src/ogl.*
+src/libogl.*
