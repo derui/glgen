@@ -25,12 +25,15 @@
 
 open MyUtil
 
+.PHONY: 3_2
+
 #
 # This project requires ocamlfind (default - false).
 #
 USE_OCAMLFIND = true
 #
 OCAMLPACKS[] =
+	sdlcaml
 	threads
 	oUnit
 	bigarray
@@ -87,9 +90,6 @@ OCAML_LINK_FLAGS += -cclib "$(MY_LINK_FLAGS) -L$(file ../src)"
 # Build bindings for OCaml to C.
 #
 
-FILES[] =
-	test_gl
-
 #
 OCAML_LIBS += 
 # OCAML_CLIBS +=
@@ -99,10 +99,9 @@ OCAML_LIBS +=
 #
 # need sdlcaml library
 
-foreach(x => ..., $(FILES))
-	OCamlProgram($x, $x)
+3_2: test_gl_modern
+	OCamlProgram(test_gl_modern, test_gl_modern)
 	export
 
-test: $(addsuffix $(EXE), $(FILES))
-	foreach(x => ..., $(FILES))
-		./$x$(EXE)
+test: $(addsuffix $(EXE), test_gl_modern)
+	./$<
