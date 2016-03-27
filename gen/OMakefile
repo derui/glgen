@@ -107,13 +107,14 @@ foreach(x => ..., $(gl_versions))
 		private.major = $(nth 0, $x)
 		private.minor = $(nth 1, $x)
 		private.LIB = ogl_$(major)_$(minor)
+		private.COMMAND = ogl_command_$(major)_$(minor)
 		private.ENUM = ogl_enum_$(major)_$(minor)
 
-		$(file $(LIB).mli): $(PROGRAM) gl.xml
+		$(file $(COMMAND).mli): $(PROGRAM) gl.xml
 			./$< -type mli -major $(major) -minor $(minor) gl.xml > $@
 		export
 
-		$(file $(LIB).ml): $(PROGRAM) gl.xml
+		$(file $(COMMAND).ml): $(PROGRAM) gl.xml
 			./$< gl.xml -type ml -major $(major) -minor $(minor) gl.xml > $@
 		export
 
@@ -121,8 +122,8 @@ foreach(x => ..., $(gl_versions))
 			./$< gl.xml -type enum -major $(major) -minor $(minor) gl.xml > $@
 		export
 
-		MyOCamlLibrary($(LIB), $(LIB) $(ENUM))
-		gen-library: $(OCamlLibrary $(LIB), $(LIB) $(ENUM)) $(file $(ENUM).ml)
+		MyOCamlLibrary($(LIB), $(COMMAND) $(ENUM))
+		gen-library: $(OCamlLibrary $(LIB), $(COMMAND) $(ENUM)) $(file $(ENUM).ml)
 		export
 
 #

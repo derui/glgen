@@ -2,7 +2,8 @@ S src
 S gen
 B src
 B gen
-EXT spec
+EXT ppx_simplespec
 PKG core
+PKG sdlcaml
 PKG ctypes
 PKG xml-light

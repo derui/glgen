@@ -164,17 +164,18 @@ module Ocaml_type = struct
     ctypes = `Builtin "int";
   }
 
-  (* for GLuint *)
+  (* for GLuint32 *)
   let gl_uint = {
-    name = "int";
-    def = `Builtin;
-    ctypes = `View ("int_as_uint",
-                    "Unsigned.UInt.to_int", "Unsigned.UInt.of_int",
-                    "uint")
+    name = "uint32";
+    def = `Alias "int32";
+    ctypes = `View ("int32_as_uint32_t",
+                    "Unsigned.UInt32.to_int32", "Unsigned.UInt32.of_int32",
+                    "uint32_t");
   }
 
+
   (* for GLbitfield *)
-  let gl_bitfield = {gl_uint with name = "gl_bitfield"; def = `Alias "int"}
+  let gl_bitfield = {gl_uint with name = "gl_bitfield"; def = `Alias "int32"}
 
   (* for GLvoid *)
   let gl_void = {
@@ -205,15 +206,6 @@ module Ocaml_type = struct
     name = "int32";
     def = `Builtin;
     ctypes = `Builtin "int32_t";
-  }
-
-  (* for GLuint32 *)
-  let gl_uint32 = {
-    name = "uint32";
-    def = `Alias "int32";
-    ctypes = `View ("int32_as_uint32_t",
-                    "Unsigned.UInt32.to_int32", "Unsigned.UInt32.of_int32",
-                    "uint32_t");
   }
 
   (* for GLfloat *)

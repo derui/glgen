@@ -43,12 +43,12 @@ let command_declarations = function
 
   (* glMapBufferRange *)
   | "glMapBufferRange" -> format_of_string "@[val map_buffer_range:@ target:int32@ ->@ offset:int@ \
-->@ length:int@ ->@ access:int@ \
+->@ length:int@ ->@ access:int32@ \
 ->@ kind:('a, 'f) Bigarray.kind@ ->@ ('a, 'f) bigarray@]@." |> Option.some
 
   (* glMapNamedBufferRange *)
   | "glMapNamedBufferRange" -> format_of_string "@[val map_named_buffer_range:@ target:int32@ ->@ offset:int@ \
-->@ length:int@ ->@ access:int@ \
+->@ length:int@ ->@ access:int32@ \
 ->@ kind:('a, 'f) Bigarray.kind@ ->@ ('a, 'f) bigarray@]@." |> Option.some
 
   | _ -> None

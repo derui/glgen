@@ -38,7 +38,7 @@ let generate_commands ppf commands =
           convert_param_to_type_annotation param
         ) in
         let params = if List.is_empty params then ["unit -> "] else params in 
-        Format.fprintf ppf "@[val %s: %s %s@]@ " name (String.concat params) typ_name
+        Format.fprintf ppf "@[val %s: %s %s@]@\n" name (String.concat params) typ_name
       end
     end
   in

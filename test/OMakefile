@@ -50,7 +50,7 @@ OCAMLFINDFLAGS =
 #
 # Include path
 #
-OCAMLINCLUDES += $(file ../src) $(file ../gen/flags) $(file ../gen/structures)
+OCAMLINCLUDES += $(file ../src) $(file ../gen)
 
 #
 # Compile native or byte code?
@@ -66,7 +66,7 @@ BYTE_ENABLED = true
 OCAMLFLAGS    += -annot -thread -g
 # OCAMLCFLAGS   +=
 # OCAMLOPTFLAGS +=
-MY_LINK_FLAGS = -DDEBUG
+MY_LINK_FLAGS = -DDEBUG $(shell sdl2-config --cflags --libs)
 if $(IsMac)
 	MY_LINK_FLAGS += -framework OpenGL
 	export
@@ -99,9 +99,10 @@ OCAML_LIBS +=
 #
 # need sdlcaml library
 
-3_2: test_gl_modern
-	OCamlProgram(test_gl_modern, test_gl_modern)
+section rule
+	OCAML_LIBS += $(file ../gen/ogl_3_2)
+	3_2: $(OCamlProgram test_gl_modern, test_gl_modern)
 	export
 
-test: $(addsuffix $(EXE), test_gl_modern)
+test: $(OCamlProgram test_gl_modern, test_gl_modern)
 	./$<
