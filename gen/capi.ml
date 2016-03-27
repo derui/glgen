@@ -173,7 +173,6 @@ module Ocaml_type = struct
                     "uint32_t");
   }
 
-
   (* for GLbitfield *)
   let gl_bitfield = {gl_uint with name = "gl_bitfield"; def = `Alias "int32"}
 
@@ -285,6 +284,13 @@ int @-> string @-> (ptr void) @-> returning void"
     "(ptr void)"
   )
 
+  let ctype_ba2_as_voidp name = `View (
+    name,
+    "(fun _ -> assert false)",
+    "(fun b -> to_voidp (bigarray_start array2 b))",
+    "(ptr void)"
+  )
+
   (* for char */const char * *)
   let ba_as_charp = {
     name = "(char, Bigarray.int8_unsigned_elt) bigarray";
@@ -294,9 +300,9 @@ int @-> string @-> (ptr void) @-> returning void"
 
   (* for char **/const char ** *)
   let ba_as_stringp = {
-    name = "(string, Bigarray.int8_unsigned_elt) bigarray";
+    name = "(char, Bigarray.int8_unsigned_elt) bigarray2";
     def = `Builtin;
-    ctypes = ctype_ba_as_voidp "ba_as_stringp"
+    ctypes = ctype_ba2_as_voidp "ba_as_stringp"
   }
 
   let ba_as_int8p = {

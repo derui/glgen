@@ -24,6 +24,7 @@ let print_types ppf commands =
   Format.fprintf ppf "@[\
 (* #1 types for bindings *)
 type ('a, 'b) bigarray = ('a, 'b, Bigarray.c_layout) Bigarray.Array1.t
+type ('a, 'b) bigarray2 = ('a, 'b, Bigarray.c_layout) Bigarray.Array2.t
 @]\n";
 
   let ctypes = to_ocaml_types commands in
