@@ -92,6 +92,8 @@ CFLAGS += -std=c99 -fPIC -g
 FILES[] =
 	ogl_camera
 	ogl_types
+	ogl_util
+	std
 
 # files for building extend libraries are contained to dependencies.
 LIBRARY_NAME = ogl
