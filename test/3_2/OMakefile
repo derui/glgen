@@ -104,8 +104,10 @@ section rule
 	OCAML_LIBS += $(file $(BIG_ROOT)/gen/ogl_3_2) $(file $(BIG_ROOT)/src/ogl)
 	3_2: $(OCamlProgram test_gl_modern, test_gl_modern test_util)
 	3_2: $(OCamlProgram test_gl_uniform, test_gl_uniform test_util)
+	3_2: $(OCamlProgram test_gl_matrix, test_gl_matrix test_util)
 	export
 
 3_2:
 	./test_gl_modern$(EXE)
 	./test_gl_uniform$(EXE)
+	./test_gl_matrix$(EXE)

@@ -14,7 +14,7 @@ let make_matrix ~pos ~at ~up =
   let ex = -. (V.dot pos camera_x)
   and ey = -. (V.dot pos up)
   and ez = -. (V.dot pos camera_direct) in
-  let m = Ogl_types.empty_mat4 () in
+  let m = Ogl_util.empty_mat4 () in
   M.set m ~row:0 ~col:0 ~v:(v_x camera_x);
   M.set m ~row:0 ~col:1 ~v:(v_y camera_x);
   M.set m ~row:0 ~col:2 ~v:(v_z camera_x);
@@ -41,7 +41,7 @@ let make_perspective_projection ~fov ~ratio ~near ~far =
   let f = tan (fov /. 2.0 *. pi /. 180.0) in
   let a = -. ((far +. near) /. (far -. near))
   and b = -. ((2.0 *. far *. near) /. (far -. near)) in
-  let m = Ogl_types.empty_mat4 () in
+  let m = Ogl_util.empty_mat4 () in
   M.set m ~row:0 ~col:0 ~v:(f /. ratio);
   M.set m ~row:1 ~col:1 ~v:f;
   M.set m ~row:2 ~col:2 ~v:a;
@@ -56,7 +56,7 @@ let make_ortho_projection ~left ~right ~top ~bottom ~near ~far =
   and tx = -1.0 *. (right +. left) /. (right -. left)
   and ty = -1.0 *. (top +. bottom) /. (top -. bottom)
   and tz = -1.0 *. (far +. near) /. (far -. near) in
-  let m = Ogl_types.empty_mat4 () in
+  let m = Ogl_util.empty_mat4 () in
 
   M.set m ~row:0 ~col:0 ~v:width_ratio ;
   M.set m ~row:0 ~col:3 ~v:tx;

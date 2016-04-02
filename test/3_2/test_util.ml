@@ -2,6 +2,19 @@ open Core.Std
 module Ogl_command = Ogl_command_3_2
 module Ogl_enum = Ogl_enum_3_2
 
+let print_compile_log shader =
+  let open Ogl_command in
+  let module A = Bigarray.Array1 in 
+  let params = A.of_array Bigarray.int32 Bigarray.c_layout [|0l|] in
+  get_shaderiv ~shader ~pname:Ogl_enum.gl_compile_status ~params;
+
+  if (A.get params 0) <> Ogl_enum.Boolean.gl_true then
+    let log = A.create Bigarray.char Bigarray.c_layout 1024 in
+    get_shader_info_log ~shader ~buf_size:1024 ~length:params ~info_log:log;
+    let log = Ctypes.bigarray_start Ctypes.array1 log |> Ctypes.string_from_ptr ~length:1024 in 
+    Printf.printf "compile error: %s\n" log
+  else ()
+
 let load_shaders ~vertex_shader ~fragment_shader =
   let open Ogl_command in
   let module A = Bigarray.Array1 in
@@ -20,7 +33,9 @@ let load_shaders ~vertex_shader ~fragment_shader =
     ~length:(to_len_ary fragment_shader);
 
   compile_shader vertexShaderID;
+  print_compile_log vertexShaderID;
   compile_shader fragmentShaderID;
+  print_compile_log fragmentShaderID;
 
   let shader_prog = create_program () in
   attach_shader ~program:shader_prog ~shader:vertexShaderID;
