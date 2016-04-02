@@ -45,7 +45,7 @@ if $(not $(OCAMLFIND_EXISTS))
    eprintln(You need to install ocamlfind and run "omake --configure".)
    exit 1
 
-OCAMLFINDFLAGS = -verbose
+OCAMLFINDFLAGS = 
 
 #
 # Include path
@@ -63,7 +63,7 @@ BYTE_ENABLED = true
 #
 # Various options
 #
-OCAMLFLAGS    += -annot -thread -g
+OCAMLFLAGS    += -bin-annot -thread -g
 # OCAMLCFLAGS   +=
 # OCAMLOPTFLAGS +=
 MY_LINK_FLAGS = -DDEBUG $(shell sdl2-config --cflags --libs)

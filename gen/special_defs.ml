@@ -1,6 +1,12 @@
 (* This module defines command bindings that are can not generate automatic from gl.xml. *)
 open Core.Std
 
+(* Get nullable argument name of given command. *)
+let nullable_args = function
+  | "glVertexAttribPointer" | "glVertexAttribIPointer" |
+      "glVertexAttribLPointer" -> ["pointer"]
+  | _ -> []
+
 let command_definitions = function
   (* glMapBuffer *)
   | "glMapBuffer" -> format_of_string "@[<hov 2>let map_buffer ~size ~kind ~target ~access =@ \

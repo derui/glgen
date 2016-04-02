@@ -89,6 +89,7 @@ module Capi_type = struct
   | `Base of Base_type.t
   | `Const of t
   | `Ptr of t
+  | `Nullable of t
   ]
 
   let to_string t = 
@@ -96,6 +97,7 @@ module Capi_type = struct
       | `Base t -> acc ^ (Base_type.string_of t)
       | `Const t -> loop ("const " ^ acc) t
       | `Ptr t -> loop ("ptr " ^ acc) t
+      | `Nullable t -> loop ("nullable " ^ acc) t
     in
     loop "" t
 end
@@ -284,10 +286,12 @@ int @-> string @-> (ptr void) @-> returning void"
     "(ptr void)"
   )
 
-  let ctype_ba2_as_voidp name = `View (
+  let ctype_opt_ba_as_voidp name = `View (
     name,
     "(fun _ -> assert false)",
-    "(fun b -> to_voidp (bigarray_start array2 b))",
+    "(function\n\
+  | None -> null\n\
+  | Some b -> to_voidp (bigarray_start array1 b))",
     "(ptr void)"
   )
 
@@ -300,9 +304,15 @@ int @-> string @-> (ptr void) @-> returning void"
 
   (* for char **/const char ** *)
   let ba_as_stringp = {
-    name = "(char, Bigarray.int8_unsigned_elt) bigarray2";
-    def = `Builtin;
-    ctypes = ctype_ba2_as_voidp "ba_as_stringp"
+    name = "stringp";
+    def = `Alias "(char, Bigarray.int8_unsigned_elt) bigarray2";
+    ctypes = `View (
+      "ba_as_stringp",
+      "(fun _ -> assert false)",
+      "(fun b -> let p : char ptr = bigarray_start array2 b in\n\
+  allocate (ptr char) p)",
+      "(ptr (ptr char))"
+    )
   }
 
   let ba_as_int8p = {
@@ -382,6 +392,19 @@ int @-> string @-> (ptr void) @-> returning void"
       ctypes = `Conversion ("(ptr void)", pp_wrap);
     }
 
+  let ba_opt_as_voidp =
+    let pp_wrap f arg =
+      Format.fprintf f
+        "@[let %s = match %s with\n\
+           | None -> null\n\
+           | Some b -> to_voidp (bigarray_start array1 b) in@]@," arg arg
+    in
+    {
+      name = "('a, 'b) bigarray option";
+      def = `Builtin;
+      ctypes = `Conversion ("(ptr void)", pp_wrap);
+    }
+
 end
 
 (* Convert capi_type to definition of ocaml_type *)
@@ -445,6 +468,14 @@ let capi_to_ocaml_type_def t =
     | `GLint64 -> `Ok Ocaml_type.ba_as_uint64p
     | `GLuint64 -> `Ok Ocaml_type.ba_as_uint64p
     | `Void -> `Ok Ocaml_type.ba_as_voidp
+    | _ -> unknown_def t
+  end
+  | `Nullable t -> begin match t with
+    | `Ptr (`Base `Void) -> `Ok Ocaml_type.ba_opt_as_voidp
+    | `Const (`Ptr (`Base base)) -> begin match base with
+      | `Void -> `Ok Ocaml_type.ba_opt_as_voidp
+      | _ -> unknown_def t
+    end
     | _ -> unknown_def t
   end
   | t -> unknown_def t

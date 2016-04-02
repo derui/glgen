@@ -44,6 +44,12 @@ let parse_param param =
   let wrapped = loop base_type qualified in
   (wrapped, name)
 
+(* Add mark if the name of param is nullable argument *)
+let fix_nullable command (typ, name) =
+  match Special_defs.nullable_args command with
+  | [] -> (typ, name)
+  | args -> if List.mem args name then (`Nullable typ, name) else (typ, name)
+
 let xml_to_name xml =
   let proto = Util.child_exn xml "proto" in
   Util.child_exn proto "name" |> Util.text_content |> String.concat
@@ -53,10 +59,12 @@ let parse xml =
   (xml_to_name xml, (fun () ->
     let proto = Util.child_exn xml "proto" in
     let params = Util.children xml "param" in
-    let proto = parse_param proto in
-    let params = List.map params ~f:parse_param in
+    let command_typ, command_name = parse_param proto in
+    let params = List.map params ~f:parse_param
+                        |> List.map ~f:(fix_nullable command_name)
+    in
     {
-      proto;
+      proto = fix_nullable command_name (command_typ, command_name);
       params;
       alias = Util.child xml "alias" |> Option.map ~f:(fun xml -> Xml.attrib xml "name")
     }

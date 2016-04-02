@@ -1,3 +1,4 @@
+open Core.Std
 open Sdlcaml.Std
 
 module Ogl_command = Ogl_command_3_2
@@ -9,18 +10,19 @@ let with_sdl f =
   f ();
   Init.quit ()
 
+let vertex_data = Bigarray.Array1.of_array Bigarray.float32 Bigarray.c_layout
+  [| -1.0; -1.0; 0.0;
+     1.0;  -1.0; 0.0;
+     0.0; 1.0; 0.0;
+  |]
+
 let make_vbo () =
-  let vertex_data = Bigarray.Array1.of_array Bigarray.float32 Bigarray.c_layout
-    [| -1.0; -1.0; 0.0;
-       0.0;  1.0; 0.0;
-       1.0; -1.0; 0.0;
-    |] in
   let open Ogl_command in
   let buffer = Bigarray.Array1.of_array Bigarray.int32 Bigarray.c_layout [|0l|] in
   gen_buffers ~n:1 ~buffers:buffer;
   let id = Bigarray.Array1.get buffer 0 in
   bind_buffer ~buffer:id ~target:Ogl_enum.gl_array_buffer;
-  buffer_data ~target:Ogl_enum.gl_array_buffer ~size:(Bigarray.Array1.dim vertex_data)
+  buffer_data ~target:Ogl_enum.gl_array_buffer ~size:(Bigarray.Array1.dim vertex_data * (Ctypes.sizeof Ctypes.float))
     ~data:vertex_data ~usage:Ogl_enum.gl_static_draw;
   buffer
 
@@ -51,7 +53,7 @@ let%spec "Vertex Buffer Object can use in core profile" =
 
       get_buffer_parameteriv ~target:Ogl_enum.gl_array_buffer
         ~pname:Ogl_enum.gl_buffer_size ~params;
-      (A.get params 0) [@eq 9l];
+      (A.get params 0) [@eq 36l];
 
       delete_buffers ~n:1 ~buffers:buffer;
       Types.Result.return ()
@@ -61,19 +63,19 @@ let%spec "Vertex Buffer Object can use in core profile" =
   )
 
 let vertex_shader_src = "
-#version 130
-in vec3 VertexPosition;
-invariant gl_Position;
-void main () {
-  gl_Position = vec4(VertexPosition, 1.0);
-}"
+#version 330 core\n
+layout(location = 0) in vec3 VertexPosition;\n
+void main () {\n
+  gl_Position.xyz = VertexPosition;\n
+  gl_Position.w = 1.0;\n
+}\n"
 
 let fragment_shader_src = "
-#version 130
-out vec4 Color;
-void main() {
-  Color = vec4(1.0, 0.0, 0.0, 1.0);
-}"
+#version 330 core\n
+out vec3 color;\n
+void main() {\n
+  color = vec3(1.0, 0.0, 0.0);\n
+}\n"
 
 let load_shaders () =
   let open Ogl_command in
@@ -82,7 +84,7 @@ let load_shaders () =
   let fragmentShaderID = create_shader Ogl_enum.gl_fragment_shader in
 
   let to_len_ary src =
-    let len = String.length vertex_shader_src |> Int32.of_int in
+    let len = String.length vertex_shader_src |> Int32.of_int_exn in
     A.of_array Bigarray.int32 Bigarray.c_layout [|len|]
   in
   shader_source ~shader:vertexShaderID ~count:1
@@ -100,38 +102,59 @@ let load_shaders () =
   attach_shader ~program:shader_prog ~shader:fragmentShaderID;
 
   link_program shader_prog;
+  detach_shader ~program:shader_prog ~shader:vertexShaderID;
+  detach_shader ~program:shader_prog ~shader:fragmentShaderID;
+
+  delete_shader vertexShaderID;
+  delete_shader fragmentShaderID;
   let vertexPosAttrib = get_attrib_location ~program:shader_prog ~name:"VertexPosition" in
-  (shader_prog, Int32.of_int vertexPosAttrib)
+  (shader_prog, Int32.of_int_exn vertexPosAttrib)
 
 let%spec "Vertex Buffer Object can draw in context " =
   let open Flags in
   with_sdl (fun () ->
-    let window = Window.create ~title:"test" ~x:0 ~y:0 ~w:100 ~h:200 ~flags:[`HIDDEN;`OPENGL] in
     let open Types.Result.Monad_infix in
-    let ctx = Gl.create_context window in
-    ctx >>= (fun ctx -> begin
-      let open Ogl_command in
-      let module A = Bigarray.Array1 in
-      let arrays = A.of_array Bigarray.int32 Bigarray.c_layout [|0l|] in
-      gen_vertex_arrays ~n:1 ~arrays;
-      let vao = A.get arrays 0 in
-      bind_vertex_array ~array:vao;
-      let vbobj = make_vbo () in
-      let sprog, pos = load_shaders () in
+    Gl.use_version ~major:3 ~minor:3 () >>= fun () -> 
+    Gl.set_attribute ~attr:Sdl_gl_attr.SDL_GL_DOUBLEBUFFER ~value:1 >>= fun () ->
+    let window = Window.create ~title:"test" ~x:0 ~y:0 ~w:640 ~h:480 ~flags:[`OPENGL] in
+    Gl.create_context window >>= (fun ctx ->
+    Gl.set_swap_interval 1 >>= fun () ->
+      begin
+        let open Ogl_command in
+        let module A = Bigarray.Array1 in
+        let sprog, pos = load_shaders () in
+        let arrays = A.of_array Bigarray.int32 Bigarray.c_layout [|0l|] in
+        gen_vertex_arrays ~n:1 ~arrays;
+        bind_vertex_array ~array:(A.get arrays 0);
 
-      viewport ~x:0 ~y:0 ~width:640 ~height:480;
-      clear ~mask:Ogl_enum.Clear_buffer_mask.gl_color_buffer_bit;
+        let vbobj = make_vbo () in
+        use_program sprog;
+        enable_vertex_attrib_array ~index:pos;
+        bind_buffer ~target:Ogl_enum.gl_array_buffer ~buffer:(A.get vbobj 0);
+        vertex_attrib_pointer ~index:pos ~size:3 ~typ:Ogl_enum.Vertex_pointer_type.gl_float
+                              ~normalized:false ~stride:0 ~pointer:None;
 
-      use_program sprog;
-      bind_buffer ~target:Ogl_enum.gl_array_buffer ~buffer:(A.get vbobj 0);
-      let pointer = A.of_array Bigarray.float32 Bigarray.c_layout [||] in
-      vertex_attrib_pointer ~index:pos ~size:3 ~typ:Ogl_enum.Vertex_pointer_type.gl_float
-        ~normalized:false ~stride:0 ~pointer;
-      enable_vertex_attrib_array ~index:pos;
-      draw_arrays ~mode:Ogl_enum.Primitive_type.gl_triangles ~first:0 ~count:9;
-      delete_buffers ~n:1 ~buffers:vbobj;
-    end;
+        let rec loop counter =
+          if counter = 0 then ()
+          else 
+            begin
+              clear_color ~red:0.0 ~blue:0.4 ~green:0.0 ~alpha:0.0;
+              clear ~mask:Int32.(bit_or Ogl_enum.Clear_buffer_mask.gl_color_buffer_bit Ogl_enum.Clear_buffer_mask.gl_depth_buffer_bit);
+
+              point_size ~size:5.0;
+              draw_arrays ~mode:Ogl_enum.Primitive_type.gl_triangles ~first:0 ~count:3;
+
+              Gl.swap_window window;
+              Timer.delay 16l;
+              loop (pred counter)
+            end
+        in
+        loop 100;
+
+        delete_vertex_arrays ~n:1 ~arrays;
+        delete_buffers ~n:1 ~buffers:vbobj;
+      end;
       Types.Result.return ctx
       >>= Gl.delete_context) |> ignore;
-    Window.destroy window
-  )
+    Window.destroy window |> Types.Result.return
+    )
