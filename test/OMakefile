@@ -102,7 +102,9 @@ OCAML_LIBS +=
 section rule
 	OCAML_LIBS += $(file ../gen/ogl_3_2) $(file ../src/ogl)
 	3_2: $(OCamlProgram test_gl_modern, test_gl_modern)
+	3_2: $(OCamlProgram test_gl_uniform, test_gl_uniform)
 	export
 
-test: $(OCamlProgram test_gl_modern, test_gl_modern)
-	./$<
+test: 3_2
+	./test_gl_modern$(EXE)
+	./test_gl_uniform$(EXE)
