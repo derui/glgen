@@ -41,38 +41,6 @@ void main() {\n
   color = vec3(1.0, 0.0, 0.0);\n
 }\n"
 
-let load_shaders () =
-  let open Ogl_command in
-  let module A = Bigarray.Array1 in
-  let vertexShaderID = create_shader Ogl_enum.gl_vertex_shader in
-  let fragmentShaderID = create_shader Ogl_enum.gl_fragment_shader in
-
-  let to_len_ary src =
-    let len = String.length src |> Int32.of_int_exn in
-    A.of_array Bigarray.int32 Bigarray.c_layout [|len|]
-  in
-  shader_source ~shader:vertexShaderID ~count:1
-    ~string:(Ogl.Std.Util.strings_to_bigarray2 [vertex_shader_src])
-    ~length:(to_len_ary vertex_shader_src);
-  shader_source ~shader:fragmentShaderID ~count:1
-    ~string:(Ogl.Std.Util.strings_to_bigarray2 [fragment_shader_src])
-    ~length:(to_len_ary fragment_shader_src);
-
-  compile_shader vertexShaderID;
-  compile_shader fragmentShaderID;
-
-  let shader_prog = create_program () in
-  attach_shader ~program:shader_prog ~shader:vertexShaderID;
-  attach_shader ~program:shader_prog ~shader:fragmentShaderID;
-
-  link_program shader_prog;
-  detach_shader ~program:shader_prog ~shader:vertexShaderID;
-  detach_shader ~program:shader_prog ~shader:fragmentShaderID;
-
-  delete_shader vertexShaderID;
-  delete_shader fragmentShaderID;
-  shader_prog
-
 let%spec "Ogl can apply uniform to location" =
   let open Flags in
   with_sdl (fun () ->
@@ -85,7 +53,7 @@ let%spec "Ogl can apply uniform to location" =
       begin
         let open Ogl_command in
         let module A = Bigarray.Array1 in
-        let sprog = load_shaders () in
+        let sprog = Test_util.load_shaders ~vertex_shader:vertex_shader_src ~fragment_shader:fragment_shader_src in
         let vertex_pos = get_attrib_location ~program:sprog ~name:"VertexPosition" |> Int32.of_int_exn in
         let uniform_location = get_uniform_location ~program:sprog ~name:"gScale" in
         uniform_location [@ne (-1)];
