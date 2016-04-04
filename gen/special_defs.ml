@@ -5,6 +5,8 @@ open Core.Std
 let nullable_args = function
   | "glVertexAttribPointer" | "glVertexAttribIPointer" |
       "glVertexAttribLPointer" -> ["pointer"]
+  | "glDrawElements" | "glDrawElementsBaseVertex" |
+      "glDrawElementsInstanced" -> ["indices"]
   | _ -> []
 
 let command_definitions = function

@@ -105,9 +105,15 @@ section rule
 	3_2: $(OCamlProgram test_gl_modern, test_gl_modern test_util)
 	3_2: $(OCamlProgram test_gl_uniform, test_gl_uniform test_util)
 	3_2: $(OCamlProgram test_gl_matrix, test_gl_matrix test_util)
+	3_2: $(OCamlProgram test_gl_matrix_transform, test_gl_matrix_transform test_util)
+	3_2: $(OCamlProgram test_gl_interpolation, test_gl_interpolation test_util)
+	3_2: $(OCamlProgram test_gl_indexed_draw, test_gl_indexed_draw test_util)
 	export
 
 3_2:
 	./test_gl_modern$(EXE)
 	./test_gl_uniform$(EXE)
 	./test_gl_matrix$(EXE)
+	./test_gl_matrix_transform$(EXE)
+	./test_gl_interpolation$(EXE)
+	./test_gl_indexed_draw$(EXE)
