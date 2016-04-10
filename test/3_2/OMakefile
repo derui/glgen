@@ -38,15 +38,15 @@ OCAMLPACKS[] =
 	threads
 	oUnit
 	bigarray
-	typedvec
 	ppx_simplespec
+	typedvec.ppx
 #
 if $(not $(OCAMLFIND_EXISTS))
    eprintln(This project requires ocamlfind, but is was not found.)
    eprintln(You need to install ocamlfind and run "omake --configure".)
    exit 1
 
-OCAMLFINDFLAGS = 
+OCAMLFINDFLAGS = -verbose
 
 #
 # Include path
@@ -100,22 +100,24 @@ OCAML_LIBS +=
 #
 # need sdlcaml library
 
+FILES[] = 
+	test_gl_modern
+	test_gl_uniform
+	test_gl_matrix
+	test_gl_matrix_transform
+	test_gl_interpolation
+	test_gl_indexed_draw
+	test_gl_matrix_world
+	test_gl_matrix_camera
+
 section rule
 	OCAML_LIBS += $(file $(BIG_ROOT)/gen/ogl_3_2) $(file $(BIG_ROOT)/src/ogl)
-	3_2: $(OCamlProgram test_gl_modern, test_gl_modern test_util)
-	3_2: $(OCamlProgram test_gl_uniform, test_gl_uniform test_util)
-	3_2: $(OCamlProgram test_gl_matrix, test_gl_matrix test_util)
-	3_2: $(OCamlProgram test_gl_matrix_transform, test_gl_matrix_transform test_util)
-	3_2: $(OCamlProgram test_gl_interpolation, test_gl_interpolation test_util)
-	3_2: $(OCamlProgram test_gl_indexed_draw, test_gl_indexed_draw test_util)
-	3_2: $(OCamlProgram test_gl_matrix_world, test_gl_matrix_world test_util)
+
+	foreach(x => ..., $(FILES))
+		3_2: $(OCamlProgram $x, $x test_util)
+		export
 	export
 
 3_2:
-	./test_gl_modern$(EXE)
-	./test_gl_uniform$(EXE)
-	./test_gl_matrix$(EXE)
-	./test_gl_matrix_transform$(EXE)
-	./test_gl_interpolation$(EXE)
-	./test_gl_indexed_draw$(EXE)
-	./test_gl_matrix_world$(EXE)
+	foreach(x => ..., $(FILES))
+		./$x$(EXE)

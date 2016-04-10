@@ -1,3 +1,4 @@
+[%%suite
 open Core.Std
 open Sdlcaml.Std
 
@@ -128,3 +129,5 @@ let%spec "Vertex Buffer Object can draw in context " =
       >>= Gl.delete_context) |> ignore;
     Window.destroy window |> Types.Result.return
     )
+
+]

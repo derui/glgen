@@ -1,3 +1,4 @@
+[%%suite
 open Core.Std
 open Sdlcaml.Std
 
@@ -93,3 +94,5 @@ let%spec "Ogl can apply uniform to location" =
       >>= Gl.delete_context) |> ignore;
     Window.destroy window |> Types.Result.return
   )
+
+]

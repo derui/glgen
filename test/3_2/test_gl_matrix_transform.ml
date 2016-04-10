@@ -1,3 +1,4 @@
+[%%suite
 open Core.Std
 open Sdlcaml.Std
 module M = Typedvec.Std.Algebra.Mat
@@ -108,3 +109,5 @@ let%spec "Ogl can apply uniform to location" =
       >>= Gl.delete_context) |> ignore;
     Window.destroy window |> Types.Result.return
   )
+
+]
