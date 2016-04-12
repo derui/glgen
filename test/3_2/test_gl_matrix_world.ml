@@ -29,9 +29,10 @@
    |]
 
  let world_trans ~scale ~trans ~rotate =
-   (* let perspective = Ogl.Std.Camera.make_perspective_projection ~fov:30.0 ~ratio:(640.0 /. 480.0) ~near:1.0 ~far:1000.0 in *)
+   let perspective = Ogl.Std.Camera.make_perspective_projection ~fov:30.0 ~ratio:(640.0 /. 480.0) ~near:1.0 ~far:1000.0 in
    let open Typedvec.Std.Algebra.Mat.Open in
-   trans *: rotate *: scale
+   let ret = perspective *: trans *: rotate *: scale in 
+   ret
 
  let rotation x y z =
    let module M = Typedvec.Std.Algebra.Mat in 
@@ -58,14 +59,14 @@
  let make_world scale =
    let module M = Typedvec.Std.Algebra.Mat in 
    let scale_t = Ogl.Std.Util.identity_mat4 () in
-   M.set ~row:0 ~col:0 ~v:(sin scale *. 0.1) scale_t;
-   M.set ~row:1 ~col:1 ~v:(sin scale *. 0.1) scale_t;
-   M.set ~row:2 ~col:2 ~v:(sin scale *. 0.1) scale_t;
+   M.set ~row:0 ~col:0 ~v:(sin scale *. 0.2) scale_t;
+   M.set ~row:1 ~col:1 ~v:(sin scale *. 0.2) scale_t;
+   M.set ~row:2 ~col:2 ~v:(sin scale *. 0.2) scale_t;
 
    let pos = Ogl.Std.Util.identity_mat4 () in
    M.set ~row:0 ~col:3 ~v:(sin scale *. 0.1) pos;
    M.set ~row:1 ~col:3 ~v:(sin scale *. 0.1) pos;
-   M.set ~row:2 ~col:3 ~v:(sin scale *. 0.1) pos;
+   M.set ~row:2 ~col:3 ~v:1.0 pos;
 
    let angle = (sin scale) in
    let rotate = rotation angle angle angle in
