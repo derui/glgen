@@ -16,6 +16,7 @@ $ omake install
 
 ## Use library
 This library providing OpenGL bindings, but not contains all functions of OpenGL 3.2/3.2 and between 4.0 to 4.5 .
+And this contains helper functions to operate for camera/perspective matrix, also provide types for vector and matrix based on the typedvec library.
 
 Provided libraries in this repository are as **library** , not **package** , so sample using this library is follows for OCaml source for OpenGL 3.2 .
 
