@@ -35,6 +35,7 @@ USE_OCAMLFIND = true
 #
 OCAMLPACKS[] =
 	sdlcaml
+	sdlcaml_image
 	threads
 	oUnit
 	bigarray
@@ -109,6 +110,7 @@ FILES[] =
 	test_gl_indexed_draw
 	test_gl_matrix_world
 	test_gl_matrix_camera
+	test_gl_basic_texture
 
 section rule
 	OCAML_LIBS += $(file $(BIG_ROOT)/gen/ogl_3_2) $(file $(BIG_ROOT)/src/ogl)
