@@ -46,9 +46,12 @@ let parse_param param =
 
 (* Add mark if the name of param is nullable argument *)
 let fix_nullable command (typ, name) =
-  match Special_defs.nullable_args command with
+  let typ, name = match Special_defs.nullable_args command with
+    | [] -> (typ, name)
+    | args -> if List.mem args name then (`Nullable typ, name) else (typ, name) in
+  match Special_defs.is_offset_or_index command with
   | [] -> (typ, name)
-  | args -> if List.mem args name then (`Nullable typ, name) else (typ, name)
+  | args -> if List.mem args name then (`Offset_or_index typ, name) else (typ, name)
 
 let xml_to_name xml =
   let proto = Util.child_exn xml "proto" in

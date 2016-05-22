@@ -5,6 +5,7 @@ B gen
 EXT ppx_simplespec
 PKG core
 PKG sdlcaml
+PKG sdlcaml_image
 PKG typedvec
 PKG ctypes
 PKG xml-light

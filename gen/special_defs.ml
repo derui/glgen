@@ -3,10 +3,13 @@ open Core.Std
 
 (* Get nullable argument name of given command. *)
 let nullable_args = function
-  | "glVertexAttribPointer" | "glVertexAttribIPointer" |
-      "glVertexAttribLPointer" -> ["pointer"]
   | "glDrawElements" | "glDrawElementsBaseVertex" |
       "glDrawElementsInstanced" -> ["indices"]
+  | _ -> []
+
+let is_offset_or_index = function
+  | "glVertexAttribPointer" | "glVertexAttribIPointer" |
+      "glVertexAttribLPointer" -> ["pointer"]
   | _ -> []
 
 let command_definitions = function

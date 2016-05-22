@@ -90,6 +90,7 @@ module Capi_type = struct
   | `Const of t
   | `Ptr of t
   | `Nullable of t
+  | `Offset_or_index of t
   ]
 
   let to_string t = 
@@ -98,6 +99,7 @@ module Capi_type = struct
       | `Const t -> loop ("const " ^ acc) t
       | `Ptr t -> loop ("ptr " ^ acc) t
       | `Nullable t -> loop ("nullable " ^ acc) t
+      | `Offset_or_index t -> loop ("offset_or_index " ^ acc) t
     in
     loop "" t
 end
@@ -405,6 +407,19 @@ int @-> string @-> (ptr void) @-> returning void"
       ctypes = `Conversion ("(ptr void)", pp_wrap);
     }
 
+  let ba_offset_or_index_as_voidp =
+    let pp_wrap f arg =
+      Format.fprintf f
+        "@[let %s = match %s with\n\
+           | `Offset o -> ptr_of_raw_address (Nativeint.of_int o)\n\
+           | `Data b -> to_voidp (bigarray_start array1 b) in@]@," arg arg
+    in
+    {
+      name = "[<`Offset of int | `Data of ('a, 'b) bigarray]";
+      def = `Builtin;
+      ctypes = `Conversion ("(ptr void)", pp_wrap);
+    }
+
 end
 
 (* Convert capi_type to definition of ocaml_type *)
@@ -468,6 +483,10 @@ let capi_to_ocaml_type_def t =
     | `GLint64 -> `Ok Ocaml_type.ba_as_uint64p
     | `GLuint64 -> `Ok Ocaml_type.ba_as_uint64p
     | `Void -> `Ok Ocaml_type.ba_as_voidp
+    | _ -> unknown_def t
+  end
+  | `Offset_or_index t -> begin match t with
+    | `Ptr (`Base `Void) -> `Ok Ocaml_type.ba_offset_or_index_as_voidp
     | _ -> unknown_def t
   end
   | `Nullable t -> begin match t with
