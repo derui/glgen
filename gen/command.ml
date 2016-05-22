@@ -45,7 +45,7 @@ let parse_param param =
   (wrapped, name)
 
 (* Add mark if the name of param is nullable argument *)
-let fix_nullable command (typ, name) =
+let fix_arg_types command (typ, name) =
   let typ, name = match Special_defs.nullable_args command with
     | [] -> (typ, name)
     | args -> if List.mem args name then (`Nullable typ, name) else (typ, name) in
@@ -64,10 +64,10 @@ let parse xml =
     let params = Util.children xml "param" in
     let command_typ, command_name = parse_param proto in
     let params = List.map params ~f:parse_param
-                        |> List.map ~f:(fix_nullable command_name)
+                        |> List.map ~f:(fix_arg_types command_name)
     in
     {
-      proto = fix_nullable command_name (command_typ, command_name);
+      proto = fix_arg_types command_name (command_typ, command_name);
       params;
       alias = Util.child xml "alias" |> Option.map ~f:(fun xml -> Xml.attrib xml "name")
     }
