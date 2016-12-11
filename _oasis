@@ -1,0 +1,18 @@
+OASISFormat: 0.4
+Name:        ogl
+Version:     0.2.0
+Synopsis:    OpenGL 3/4 wrapper for OCaml
+Authors:     derui
+License:     MIT
+BuildType:   Custom (0.4)
+InstallType: Custom (0.4)
+XCustomBuild:      sh -c "omake PREFIX=$prefix"
+XCustomInstall:    sh -c "omake PREFIX=$prefix install"
+XCustomUninstall:  sh -c "omake PREFIX=$prefix uninstall"
+XCustomBuildClean: sh -c "omake PREFIX=$prefix clean"
+BuildTools: omake
+
+Test test
+  Type: Custom (0.4)
+  TestTools: omake
+  Command: sh -c "omake PREFIX=$prefix exec"

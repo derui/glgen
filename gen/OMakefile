@@ -126,13 +126,6 @@ foreach(x => ..., $(gl_versions))
 		gen-library: $(OCamlLibrary $(LIB), $(COMMAND) $(ENUM)) $(file $(ENUM).ml)
 		export
 
-#
-# OCAML_LIBS += -custom
-# OCAML_CLIBS +=
-# OCAML_OTHER_LIBS += camlidl
-# OCAML_LIB_FLAGS += -cclib -lsdlcaml
-#
-
 gen: gen-library
 
 .DEFAULT: gen
